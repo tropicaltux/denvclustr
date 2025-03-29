@@ -1,4 +1,4 @@
-# Based on github.com/github/gitignore/blob/main/Go.gitignore
+# Based on https://github.com/github/gitignore/blob/main/Go.gitignore
 #
 # Binaries for programs and plugins
 *.exe
