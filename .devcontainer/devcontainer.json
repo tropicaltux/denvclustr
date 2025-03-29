@@ -1,0 +1,12 @@
+{
+    "name": "Project X",
+    "image": "mcr.microsoft.com/devcontainers/go:1.24-bookworm",
+    "workspaceFolder": "/project-x",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/project-x,type=bind,consistency=cached",
+    "customizations": {
+      "vscode": {
+        "settings": {},
+        "extensions": []
+      }
+	}
+}
