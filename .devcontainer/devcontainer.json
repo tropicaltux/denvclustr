@@ -6,6 +6,7 @@
     "remoteEnv": {
       "PROJECT_X_LOG_DIR": "${containerWorkspaceFolder}/.logs"
     },
+    "onCreateCommand": "go mod download",
     "customizations": {
       "vscode": {
         "settings": {},
