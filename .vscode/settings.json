@@ -1,8 +1,11 @@
 {
     "cSpell.words": [
+        "gopkg",
         "codecluster",
+        "jsonparser",
+        "easyjson",
         "jsonschema",
         "devcontainers",
-        "invopop" // github username
+        "tropicaltux"
     ]
 }
