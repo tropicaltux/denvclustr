@@ -6,6 +6,7 @@
         "easyjson",
         "jsonschema",
         "devcontainers",
-        "tropicaltux"
+        "tropicaltux",
+        "invopop"
     ]
 }
