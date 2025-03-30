@@ -15,7 +15,7 @@ var (
 type CodeclusterConfiguration struct {
 	// "devcontainers" is a map whose keys are devcontainer id in cluster,
 	// and values are Devcontainer objects.
-	Devcontainers map[string]*Devcontainer `json:"devcontainers,omitempty"`
+	Devcontainers map[string]*Devcontainer `json:"devcontainers"`
 }
 
 // Devcontainer describes each named devcontainer entry.
