@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Update codecluster schema",
+      "type": "shell",
+      "command": "go",
+      "args": ["run", "cmd/codecluster_schema/generate_schema.go", "-out", "${workspaceFolder}/api/codecluster/configuration-schema.json"]
+    }
+  ]
+}

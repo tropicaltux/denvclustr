@@ -42,7 +42,9 @@ type Devcontainer struct {
 // GetCodeclusterSchema lazily builds and returns the JSON Schema for codecluster configuration file.
 func GetCodeclusterSchema() *jsonschema.Schema {
 	codeclusterSchemaOnce.Do(func() {
-		r := &jsonschema.Reflector{}
+		r := &jsonschema.Reflector{
+			DoNotReference: true,
+		}
 		codeclusterSchema = r.Reflect(&CodeclusterConfiguration{})
 	})
 	return codeclusterSchema

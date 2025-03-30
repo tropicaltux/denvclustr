@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tropicaltux/project-x/pkg/codecluster/codecluster-configuration",
+  "properties": {
+    "devcontainers": {
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "required": [
+              "repository_url"
+            ],
+            "title": "url"
+          },
+          {
+            "required": [
+              "repository_path"
+            ],
+            "title": "path"
+          }
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the devcontainer in cluster. This parameter intended for a clearer, more human-friendly name. If not set, defaults to the devcontainer id."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the devcontainer in cluster. This parameter intended for a more detailed description of the devcontainer."
+          },
+          "repository_url": {
+            "type": "string",
+            "description": "URL to the repository. Cannot coexist with repository_path."
+          },
+          "repository_path": {
+            "type": "string",
+            "description": "Local path to the repository. Cannot coexist with repository_url."
+          },
+          "branch": {
+            "type": "string",
+            "description": "Branch name (default 'main'). Optional, ignored if repository_path is set.",
+            "default": "main"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}
