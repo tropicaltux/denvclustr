@@ -6,6 +6,10 @@
     "remoteEnv": {
       "PROJECT_X_LOG_DIR": "${containerWorkspaceFolder}/.logs"
     },
+    "features": {
+      "ghcr.io/devcontainers/features/aws-cli:1": {},
+      "ghcr.io/devcontainers/features/terraform:1": {}
+    },
     "onCreateCommand": "go mod download",
     "customizations": {
       "vscode": {
