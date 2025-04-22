@@ -50,11 +50,32 @@ build {
 
   provisioner "shell" {
     inline = [
+      # Update the system
       "sudo dnf update -y",
-      "sudo dnf install -y git docker nodejs",
+
+      # Install Docker
+      "sudo dnf install -y git docker",
       "sudo systemctl enable docker",
       "sudo usermod -aG docker ec2-user",
-      "sudo npm install -g @devcontainers/cli"
+
+      # Install Docker Compose Plugin
+      "export CLI_PLUGINS_DIR=/usr/local/lib/docker/cli-plugins",
+      "export DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m)",
+      "sudo mkdir -p $CLI_PLUGINS_DIR",
+      "sudo curl -SL $DOCKER_COMPOSE_URL -o $CLI_PLUGINS_DIR/docker-compose",
+      "sudo chmod +x $CLI_PLUGINS_DIR/docker-compose",
+
+      # Install Dev Containers CLI
+      "sudo dnf install -y git nodejs",
+      "sudo npm install -g @devcontainers/cli",
+
+      # Install NGINX
+      "sudo dnf install -y nginx",
+      "sudo systemctl enable nginx",
+      "sudo systemctl start nginx",
+
+      # Install Certbot
+      "sudo dnf install certbot python3-certbot-nginx -y"
     ]
   }
 }
