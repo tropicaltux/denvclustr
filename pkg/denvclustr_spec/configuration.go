@@ -7,12 +7,12 @@ import (
 )
 
 var (
-	codeclusterSchema     *jsonschema.Schema
-	codeclusterSchemaOnce sync.Once
+	denvclustrSchema     *jsonschema.Schema
+	denvclustrSchemaOnce sync.Once
 )
 
-// CodeclusterConfiguration describes the top-level JSON structure:
-type CodeclusterConfiguration struct {
+// DenvclustrConfiguration describes the top-level JSON structure:
+type DenvclustrConfiguration struct {
 	// "devcontainers" is a map whose keys are devcontainer id in cluster,
 	// and values are Devcontainer objects.
 	Devcontainers map[string]*Devcontainer `json:"devcontainers"`
@@ -39,13 +39,13 @@ type Devcontainer struct {
 	Branch string `json:"branch,omitempty" jsonschema:"default=main" jsonschema_description:"Branch name (default 'main'). Optional, ignored if repository_path is set."`
 }
 
-// GetCodeclusterSchema lazily builds and returns the JSON Schema for denvclustr configuration file.
-func GetCodeclusterSchema() *jsonschema.Schema {
-	codeclusterSchemaOnce.Do(func() {
+// GetDenvclustrSchema lazily builds and returns the JSON Schema for denvclustr configuration file.
+func GetDenvclustrSchema() *jsonschema.Schema {
+	denvclustrSchemaOnce.Do(func() {
 		r := &jsonschema.Reflector{
 			DoNotReference: true,
 		}
-		codeclusterSchema = r.Reflect(&CodeclusterConfiguration{})
+		denvclustrSchema = r.Reflect(&DenvclustrConfiguration{})
 	})
-	return codeclusterSchema
+	return denvclustrSchema
 }

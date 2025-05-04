@@ -7,7 +7,7 @@ This utility generates a JSON schema for the denvclustr configuration. The schem
 The schema generator can be run from the project root with the following command:
 
 ```bash
-go run cmd/codecluster_schema/generate_schema.go [options]
+go run cmd/denvclustr_schema/generate_schema.go [options]
 ```
 
 ### Options
@@ -19,13 +19,13 @@ go run cmd/codecluster_schema/generate_schema.go [options]
 1. Generate the schema and print it to stdout:
 
 ```bash
-go run cmd/codecluster_schema/generate_schema.go
+go run cmd/denvclustr_schema/generate_schema.go
 ```
 
 2. Generate the schema and save it to a file:
 
 ```bash
-go run cmd/codecluster_schema/generate_schema.go -out denvclustr-schema.json
+go run cmd/denvclustr_schema/generate_schema.go -out denvclustr-schema.json
 ```
 
 ## VS Code Integration
