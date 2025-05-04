@@ -8,8 +8,8 @@ import (
 
 // DeserializeConfiguration parses the JSON configuration data and returns
 // the deserialized configuration, informational messages, warnings, and any errors.
-func DeserializeConfiguration(data []byte) (*DenvclustrConfiguration, []string, []string, error) {
-	var config DenvclustrConfiguration
+func DeserializeConfiguration(data []byte) (*DenvclustrRoot, []string, []string, error) {
+	var config DenvclustrRoot
 	var warnings []string
 	var infos []string
 

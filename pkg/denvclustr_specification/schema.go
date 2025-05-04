@@ -11,8 +11,8 @@ var (
 	denvclustrSchemaOnce sync.Once
 )
 
-// DenvclustrConfiguration describes the top-level JSON structure:
-type DenvclustrConfiguration struct {
+// DenvclustrRoot describes the top-level JSON structure:
+type DenvclustrRoot struct {
 	// "devcontainers" is a map whose keys are devcontainer id in cluster,
 	// and values are Devcontainer objects.
 	Devcontainers map[string]*Devcontainer `json:"devcontainers"`
@@ -45,7 +45,7 @@ func GetSchema() *jsonschema.Schema {
 		r := &jsonschema.Reflector{
 			DoNotReference: true,
 		}
-		denvclustrSchema = r.Reflect(&DenvclustrConfiguration{})
+		denvclustrSchema = r.Reflect(&DenvclustrRoot{})
 	})
 	return denvclustrSchema
 }
