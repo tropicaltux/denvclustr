@@ -1,4 +1,4 @@
-package codecluster
+package denvclustr
 
 import (
 	"sync"
@@ -39,7 +39,7 @@ type Devcontainer struct {
 	Branch string `json:"branch,omitempty" jsonschema:"default=main" jsonschema_description:"Branch name (default 'main'). Optional, ignored if repository_path is set."`
 }
 
-// GetCodeclusterSchema lazily builds and returns the JSON Schema for codecluster configuration file.
+// GetCodeclusterSchema lazily builds and returns the JSON Schema for denvclustr configuration file.
 func GetCodeclusterSchema() *jsonschema.Schema {
 	codeclusterSchemaOnce.Do(func() {
 		r := &jsonschema.Reflector{

@@ -2,11 +2,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Project-X",
+            "name": "Launch denvclustr",
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/projectx/main.go"
+            "program": "${workspaceFolder}/cmd/denvclustr/main.go"
         },
         {
             "name": "Run Tests",

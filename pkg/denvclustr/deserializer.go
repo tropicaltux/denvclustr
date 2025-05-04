@@ -1,4 +1,4 @@
-package codecluster
+package denvclustr
 
 import (
 	"encoding/json"

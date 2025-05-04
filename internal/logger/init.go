@@ -1,4 +1,4 @@
-// Package logger initializes a default logger for project-x.
+// Package logger initializes a default logger for denvclustr.
 // It automatically initializes a default logger during package import
 // that writes logs to a file in the appropriate data directory for the user's OS.
 package logger
@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	defaultLogFileName = "project-x.log"
-	envLogDir          = "PROJECT_X_LOG_DIR"
-	appName            = "project-x"
+	defaultLogFileName = "denvclustr.log"
+	envLogDir          = "DENVCLUSTR_LOG_DIR"
+	appName            = "denvclustr"
 )
 
 // dummyLogger creates a logger that discards all log messages.
@@ -26,11 +26,11 @@ func dummyLogger() *slog.Logger {
 }
 
 // getDefaultLogDir determines the appropriate directory for storing log files.
-// It checks for a custom directory in the PROJECT_X_LOG_DIR environment variable first.
+// It checks for a custom directory in the DENVCLUSTR_LOG_DIR environment variable first.
 // Otherwise, it uses platform-specific directories according to XDG specifications:
-//   - Linux: ~/.local/state/project-x/logs
-//   - macOS: ~/Library/Application Support/project-x/logs
-//   - Windows: %APPDATA%\project-x\logs
+//   - Linux: ~/.local/state/denvclustr/logs
+//   - macOS: ~/Library/Application Support/denvclustr/logs
+//   - Windows: %APPDATA%\denvclustr\logs
 func getDefaultLogDir() (string, error) {
 	if custom := os.Getenv(envLogDir); custom != "" {
 		return custom, nil

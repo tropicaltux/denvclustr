@@ -1,10 +1,10 @@
-package projectx
+package denvclustr
 
 import (
 	"fmt"
 	"log/slog"
 
-	_ "github.com/tropicaltux/project-x/internal/logger"
+	_ "github.com/tropicaltux/denvclustr/internal/logger"
 )
 
 func Run() {

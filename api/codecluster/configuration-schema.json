@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/tropicaltux/project-x/pkg/codecluster/codecluster-configuration",
+  "$id": "https://github.com/tropicaltux/denvclustr/pkg/denvclustr/denvclustr-configuration",
   "properties": {
     "devcontainers": {
       "additionalProperties": {

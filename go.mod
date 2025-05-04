@@ -1,4 +1,4 @@
-module github.com/tropicaltux/project-x
+module github.com/tropicaltux/denvclustr
 
 go 1.24.1
 

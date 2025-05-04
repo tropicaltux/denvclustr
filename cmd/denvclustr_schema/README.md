@@ -1,6 +1,6 @@
-# Codecluster Schema Generator
+# Denvclustr Schema Generator
 
-This utility generates a JSON schema for the codecluster configuration. The schema can be used for validation and auto-completion in editors that support JSON schemas.
+This utility generates a JSON schema for the denvclustr configuration. The schema can be used for validation and auto-completion in editors that support JSON schemas.
 
 ## Usage
 
@@ -25,7 +25,7 @@ go run cmd/codecluster_schema/generate_schema.go
 2. Generate the schema and save it to a file:
 
 ```bash
-go run cmd/codecluster_schema/generate_schema.go -out codecluster-schema.json
+go run cmd/codecluster_schema/generate_schema.go -out denvclustr-schema.json
 ```
 
 ## VS Code Integration
@@ -34,6 +34,6 @@ A VS Code task has been configured to automatically update the schema:
 
 1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS)
 2. Select "Tasks: Run Task"
-3. Choose "Update codecluster schema"
+3. Choose "Update denvclustr schema"
 
-This will update the schema at `/path/to/repo/api/codecluster/configuration-schema.json`.
+This will update the schema at `/path/to/repo/api/denvclustr/configuration-schema.json`.
