@@ -1,6 +1,6 @@
 # Denvclustr Schema Generator
 
-This utility generates a JSON schema for the denvclustr configuration. The schema can be used for validation and auto-completion in editors that support JSON schemas.
+This utility generates a JSON schema for the denvclustr file. The schema can be used for validation and auto-completion in editors that support JSON schemas.
 
 ## Usage
 
@@ -36,4 +36,4 @@ A VS Code task has been configured to automatically update the schema:
 2. Select "Tasks: Run Task"
 3. Choose "Update denvclustr schema"
 
-This will update the schema at `/path/to/repo/api/denvclustr/configuration-schema.json`.
+This will update the schema at `/path/to/repo/api/denvclustr/denvclustr-schema.json`.

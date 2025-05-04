@@ -6,16 +6,16 @@ import (
 	"strings"
 )
 
-// DeserializeConfiguration parses the JSON configuration data and returns
-// the deserialized configuration, informational messages, warnings, and any errors.
-func DeserializeConfiguration(data []byte) (*DenvclustrRoot, []string, []string, error) {
+// DeserializeDenvclustrFile parses the JSON file data and returns
+// the deserialized denvclustr file, informational messages, warnings, and any errors.
+func DeserializeDenvclustrFile(data []byte) (*DenvclustrRoot, []string, []string, error) {
 	var config DenvclustrRoot
 	var warnings []string
 	var infos []string
 
 	// Deserialize the JSON data
 	if err := json.Unmarshal(data, &config); err != nil {
-		return nil, nil, nil, fmt.Errorf("failed to parse configuration: %w", err)
+		return nil, nil, nil, fmt.Errorf("failed to parse denvclustr file: %w", err)
 	}
 
 	// Process each devcontainer

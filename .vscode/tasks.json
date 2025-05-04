@@ -5,7 +5,7 @@
       "label": "Update denvclustr schema",
       "type": "shell",
       "command": "go",
-      "args": ["run", "cmd/denvclustr_schema/generate_schema.go", "-out", "${workspaceFolder}/api/denvclustr/configuration-schema.json"]
+      "args": ["run", "cmd/denvclustr_schema/generate_schema.go", "-out", "${workspaceFolder}/api/denvclustr/denvclustr-schema.json"]
     }
   ]
 }

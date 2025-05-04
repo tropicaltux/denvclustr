@@ -39,7 +39,7 @@ type Devcontainer struct {
 	Branch string `json:"branch,omitempty" jsonschema:"default=main" jsonschema_description:"Branch name (default 'main'). Optional, ignored if repository_path is set."`
 }
 
-// GetSchema lazily builds and returns the JSON Schema for denvclustr configuration file.
+// GetSchema lazily builds and returns the JSON Schema for denvclustr file.
 func GetSchema() *jsonschema.Schema {
 	denvclustrSchemaOnce.Do(func() {
 		r := &jsonschema.Reflector{
