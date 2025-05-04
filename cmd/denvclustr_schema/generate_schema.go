@@ -15,7 +15,7 @@ func main() {
 	flag.Parse()
 
 	// Get the JSON schema
-	schema := denvclustr_specification.GetDenvclustrSchema()
+	schema := denvclustr_specification.GetSchema()
 
 	// Marshal the schema to JSON with indentation
 	schemaJSON, err := json.MarshalIndent(schema, "", "  ")
