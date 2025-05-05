@@ -25,10 +25,6 @@ func collectNodes(nodes []*Node) map[string]*Node {
 }
 
 func processInfrastructure(infrastructure []*InfrastructureProvider) error {
-	if len(infrastructure) == 0 {
-		return fmt.Errorf("no infrastructure providers specified; at least one infrastructure provider is required")
-	}
-
 	// Track Ids to ensure uniqueness using a set
 	seenIds := make(map[string]struct{})
 
@@ -80,10 +76,6 @@ func processInfrastructure(infrastructure []*InfrastructureProvider) error {
 }
 
 func processNodes(nodes []*Node, infrastructureIds map[string]struct{}) error {
-	if len(nodes) == 0 {
-		return fmt.Errorf("no nodes specified; at least one node is required")
-	}
-
 	// Track node IDs to ensure uniqueness
 	seenNodeIds := make(map[string]struct{})
 
@@ -212,10 +204,6 @@ func processRemoteAccess(dc *Devcontainer, nodes map[string]*Node) error {
 }
 
 func processDevcontainers(devcontainers []*Devcontainer, nodes map[string]*Node) error {
-	if len(devcontainers) == 0 {
-		return fmt.Errorf("no devcontainers specified; at least one devcontainer is required")
-	}
-
 	// Track devcontainer IDs to ensure uniqueness
 	seenIds := make(map[string]struct{})
 

@@ -116,13 +116,34 @@ type Node struct {
 	DNS *NodeDNS `json:"dns,omitempty" jsonschema_description:"DNS configuration for this node."`
 }
 
+// addCustomValidations adds custom validations to the schema that can't be expressed through struct tags
+func addCustomValidations(schema *jsonschema.Schema) {
+	// Add uniqueItems constraint for arrays
+	props := schema.Properties
+	if infrastructureProp, ok := props.Get("infrastructure"); ok && infrastructureProp != nil {
+		infrastructureProp.UniqueItems = true
+	}
+	if nodesProp, ok := props.Get("nodes"); ok && nodesProp != nil {
+		nodesProp.UniqueItems = true
+	}
+	if devcontainersProp, ok := props.Get("devcontainers"); ok && devcontainersProp != nil {
+		devcontainersProp.UniqueItems = true
+	}
+}
+
 // GetSchema lazily builds and returns the JSON Schema for denvclustr file.
 func GetSchema() *jsonschema.Schema {
 	denvclustrSchemaOnce.Do(func() {
 		r := &jsonschema.Reflector{
-			DoNotReference: true,
+			DoNotReference:             true,
+			RequiredFromJSONSchemaTags: true,
+			ExpandedStruct:             true,
+			AllowAdditionalProperties:  false,
 		}
 		denvclustrSchema = r.Reflect(&DenvclustrRoot{})
+
+		// Add additional custom validations that can't be expressed through struct tags
+		addCustomValidations(denvclustrSchema)
 	})
 	return denvclustrSchema
 }

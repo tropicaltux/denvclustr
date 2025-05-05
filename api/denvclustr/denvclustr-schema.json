@@ -47,6 +47,7 @@
       },
       "type": "array",
       "minItems": 1,
+      "uniqueItems": true,
       "description": "List of infrastructure backends where nodes may be deployed."
     },
     "nodes": {
@@ -121,6 +122,7 @@
       },
       "type": "array",
       "minItems": 1,
+      "uniqueItems": true,
       "description": "List of nodes where devcontainers will be deployed."
     },
     "devcontainers": {
@@ -228,11 +230,13 @@
         "type": "object",
         "required": [
           "id",
-          "node_id"
+          "node_id",
+          "source"
         ]
       },
       "type": "array",
       "minItems": 1,
+      "uniqueItems": true,
       "description": "List of devcontainers that will be deployed on nodes."
     }
   },
