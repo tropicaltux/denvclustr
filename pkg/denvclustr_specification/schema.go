@@ -37,11 +37,11 @@ const (
 type DenvclustrRoot struct {
 	Name string `json:"name" jsonschema:"required,minLength=1" jsonschema_description:"Unique identifier for the cluster."`
 
-	Infrastructure []*InfrastructureProvider `json:"infrastructure" jsonschema:"minItems=1" jsonschema_description:"List of infrastructure backends where nodes may be deployed."`
+	Infrastructure []*InfrastructureProvider `json:"infrastructure" jsonschema:"required,minItems=1" jsonschema_description:"List of infrastructure backends where nodes may be deployed."`
 
-	Nodes []*Node `json:"nodes" jsonschema:"minItems=1" jsonschema_description:"List of nodes where devcontainers will be deployed."`
+	Nodes []*Node `json:"nodes" jsonschema:"required,minItems=1" jsonschema_description:"List of nodes where devcontainers will be deployed."`
 
-	Devcontainers []*Devcontainer `json:"devcontainers" jsonschema:"minItems=1" jsonschema_description:"List of devcontainers that will be deployed on nodes."`
+	Devcontainers []*Devcontainer `json:"devcontainers" jsonschema:"required,minItems=1" jsonschema_description:"List of devcontainers that will be deployed on nodes."`
 }
 
 // Infrastructure describes a single infrastructure backend.
@@ -98,7 +98,7 @@ type Devcontainer struct {
 
 	NodeId string `json:"node_id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$" jsonschema_description:"Identifier of the node that will host this devcontainer (must match an entry in the top‑level nodes list)."`
 
-	Source *DevcontainerSource `json:"source,omitempty" jsonschema_description:"Reference to the source location containing the devcontainer definition and related files."`
+	Source *DevcontainerSource `json:"source" jsonschema:"required" jsonschema_description:"Reference to the source location containing the devcontainer definition and related files."`
 
 	RemoteAccess *DevcontainerRemoteAccess `json:"remote_access,omitempty" jsonschema:"default={\"openvscode_server\":{}}" jsonschema_description:"Configuration for accessing the devcontainer remotely via SSH or a web-based IDE. OpenVSCode Server is enabled by default."`
 }
