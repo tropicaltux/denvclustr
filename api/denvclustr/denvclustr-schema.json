@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tropicaltux/denvclustr/pkg/denvclustr_specification/denvclustr-root",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for the cluster."
+    },
+    "infrastructure": {
+      "items": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$",
+            "description": "Unique identifier for this infrastructure provider within the cluster. Must start with a letter or underscore, can contain alphanumeric characters, underscores, and hyphens. Cannot end with a hyphen."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "vm"
+            ],
+            "description": "Type of infrastructure. Currently only 'vm' is supported."
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "aws"
+            ],
+            "description": "Name of the platform. Currently only 'aws' is supported."
+          },
+          "region": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Geographic location where resources will be deployed (e.g., 'us-west-2' for AWS). Must be a valid region identifier for the specified provider."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "provider",
+          "region"
+        ]
+      },
+      "type": "array",
+      "minItems": 1,
+      "description": "List of infrastructure backends where nodes may be deployed."
+    },
+    "nodes": {
+      "items": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$",
+            "description": "Unique identifier for this node. Must start with a letter or underscore, can contain alphanumeric characters, underscores, and hyphens. Cannot end with a hyphen."
+          },
+          "infrastructure_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$",
+            "description": "Reference to an entry in the 'infrastructure' array."
+          },
+          "properties": {
+            "properties": {
+              "instance_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The machine type or class used to provision this node, specific to the target infrastructure."
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "instance_type"
+            ],
+            "description": "General technical configuration of the node."
+          },
+          "remote_access": {
+            "properties": {
+              "public_ssh_key": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Path to local public SSH key."
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "public_ssh_key"
+            ],
+            "description": "Access configuration for the node."
+          },
+          "dns": {
+            "properties": {
+              "high_level_domain": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Top-level domain or subdomain what will be used for public devcontainer."
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "high_level_domain"
+            ],
+            "description": "DNS configuration for this node."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "infrastructure_id",
+          "properties",
+          "remote_access"
+        ]
+      },
+      "type": "array",
+      "minItems": 1,
+      "description": "List of nodes where devcontainers will be deployed."
+    },
+    "devcontainers": {
+      "items": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$",
+            "description": "Unique identifier of this devcontainer within the cluster."
+          },
+          "node_id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$",
+            "description": "Identifier of the node that will host this devcontainer (must match an entry in the top‑level nodes list)."
+          },
+          "source": {
+            "properties": {
+              "url": {
+                "type": "string",
+                "minLength": 1,
+                "format": "uri",
+                "description": "Git repository URL containing the devcontainer definition. For SSH URLs (starting with 'ssh://' or 'git@'), an SSH key must be provided."
+              },
+              "branch": {
+                "type": "string",
+                "description": "Git branch to checkout from the repository. If not specified, the repository's default branch will be used."
+              },
+              "devcontainer_path": {
+                "type": "string",
+                "description": "Relative path to the devcontainer definition within the repository. If not specified, the root directory will be used."
+              },
+              "ssh_key": {
+                "properties": {
+                  "reference": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Reference identifier for the SSH key in the specified secret backend. Used to authenticate with private Git repositories."
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "secrets_manager",
+                      "ssm_parameter_store"
+                    ],
+                    "description": "Secret backend service where the private SSH key is stored. Must be either 'secrets_manager' or 'ssm_parameter_store'."
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "reference",
+                  "source"
+                ],
+                "description": "SSH key configuration for cloning from private Git repositories. Required for SSH URLs, must be omitted for HTTPS URLs."
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "required": [
+              "url"
+            ],
+            "description": "Reference to the source location containing the devcontainer definition and related files."
+          },
+          "remote_access": {
+            "properties": {
+              "openvscode_server": {
+                "properties": {
+                  "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1024,
+                    "description": "TCP port used to expose the OpenVSCode Server interface. If not specified, an available port will be selected automatically. Must be omitted if DNS is configured at the node level."
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "description": "Optional web-based IDE access to the devcontainer via OpenVSCode Server."
+              },
+              "ssh": {
+                "properties": {
+                  "port": {
+                    "type": "integer",
+                    "maximum": 65535,
+                    "minimum": 1024,
+                    "description": "TCP port used for remote SSH access to the devcontainer. If not specified, an available port will be selected automatically."
+                  },
+                  "public_ssh_key": {
+                    "type": "string",
+                    "description": "Path to the local public SSH key used for authentication. If omitted, the public SSH key configured at the node level will be used."
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "description": "Optional access to the devcontainer via Secure Shell (SSH)."
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "description": "Configuration for accessing the devcontainer remotely via SSH or a web-based IDE. OpenVSCode Server is enabled by default."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "node_id"
+        ]
+      },
+      "type": "array",
+      "minItems": 1,
+      "description": "List of devcontainers that will be deployed on nodes."
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "required": [
+    "name",
+    "infrastructure",
+    "nodes",
+    "devcontainers"
+  ]
+}
