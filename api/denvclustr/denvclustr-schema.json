@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/tropicaltux/denvclustr/pkg/denvclustr_specification/denvclustr-root",
+  "$id": "https://github.com/tropicaltux/denvclustr/pkg/schema/denvclustr-root",
   "properties": {
     "name": {
       "type": "string",
@@ -100,7 +100,7 @@
               "high_level_domain": {
                 "type": "string",
                 "minLength": 1,
-                "description": "Top-level domain or subdomain what will be used for public devcontainer."
+                "description": "Top-level domain or subdomain that will be used for public devcontainer."
               }
             },
             "additionalProperties": false,
@@ -150,7 +150,7 @@
               },
               "branch": {
                 "type": "string",
-                "description": "Git branch to checkout from the repository. If not specified, the repository's default branch will be used."
+                "description": "Git branch to checkout. If not specified, the repository's default branch will be used."
               },
               "devcontainer_path": {
                 "type": "string",

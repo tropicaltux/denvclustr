@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	denvclustr_specification "github.com/tropicaltux/denvclustr/pkg/denvclustr_specification"
+	shema "github.com/tropicaltux/denvclustr/pkg/schema"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	flag.Parse()
 
 	// Get the JSON schema
-	schema := denvclustr_specification.GetSchema()
+	schema := shema.GetSchema()
 
 	// Marshal the schema to JSON with indentation
 	schemaJSON, err := json.MarshalIndent(schema, "", "  ")

@@ -1,4 +1,4 @@
-package denvclustr
+package schema
 
 import (
 	"encoding/json"
