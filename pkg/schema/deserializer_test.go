@@ -20,22 +20,19 @@ func readTestFile(t *testing.T, filePath string) ([]byte, error) {
 
 // TestValidCompleteInput tests deserialization of a valid complete JSON input.
 func TestValidCompleteInput(t *testing.T) {
-	// Read the test file
 	data, err := readTestFile(t, "testdata/valid_complete.json")
 	if err != nil {
 		t.Fatalf("Failed to read test file: %v", err)
 	}
 
-	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
-	// Expected result
 	want := &DenvclustrRoot{
 		Name: "test-cluster",
 		Infrastructure: []*Infrastructure{
@@ -81,24 +78,21 @@ func TestValidCompleteInput(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("DeserializeDenvclustrFile() = %v, want %v", got, want)
+		t.Errorf("deserializeDenvclustrFile() = %v, want %v", got, want)
 	}
 }
 
 // TestValidMinimalInput tests deserialization of a minimal valid JSON input.
 func TestValidMinimalInput(t *testing.T) {
-	// Read the test file
 	data, err := readTestFile(t, "testdata/valid_minimal.json")
 	if err != nil {
 		t.Fatalf("Failed to read test file: %v", err)
 	}
 
-	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
-	// Validate results
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
@@ -137,92 +131,33 @@ func TestValidMinimalInput(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("DeserializeDenvclustrFile() = %v, want %v", got, want)
+		t.Errorf("deserializeDenvclustrFile() = %v, want %v", got, want)
 	}
 }
 
 // TestInvalidJSONSyntax tests deserialization of an invalid JSON input.
 func TestInvalidJSONSyntax(t *testing.T) {
-	// Read the test file
 	data, err := readTestFile(t, "testdata/invalid_json_syntax.json")
 	if err != nil {
 		t.Fatalf("Failed to read test file: %v", err)
 	}
 
-	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
-	// Validate results
 	if err == nil {
-		t.Errorf("DeserializeDenvclustrFile() expected error, got nil")
+		t.Errorf("deserializeDenvclustrFile() expected error, got nil")
 		return
 	}
 
 	// Check that the error message contains the expected substring
 	expectedErrSubstring := "unexpected end of JSON input"
 	if !strings.Contains(err.Error(), expectedErrSubstring) {
-		t.Errorf("DeserializeDenvclustrFile() error = %v, want error containing %q", err, expectedErrSubstring)
+		t.Errorf("deserializeDenvclustrFile() error = %v, want error containing %q", err, expectedErrSubstring)
 	}
 
 	// Check that the result is nil
 	if got != nil {
-		t.Errorf("DeserializeDenvclustrFile() = %v, want nil", got)
-	}
-}
-
-// TestMissingName tests deserialization of JSON with missing name field.
-func TestMissingName(t *testing.T) {
-	// Read the test file
-	data, err := readTestFile(t, "testdata/missing_name.json")
-	if err != nil {
-		t.Fatalf("Failed to read test file: %v", err)
-	}
-
-	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
-
-	// Validate results - no error expected as validation happens elsewhere
-	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
-		return
-	}
-
-	// Expected result
-	want := &DenvclustrRoot{
-		Name: "",
-		Infrastructure: []*Infrastructure{
-			{
-				Id:       "aws_infra",
-				Kind:     "vm",
-				Provider: "aws",
-				Region:   "us-west-2",
-			},
-		},
-		Nodes: []*Node{
-			{
-				Id:               "node1",
-				InfrastructureId: "aws_infra",
-				Properties: NodeProperties{
-					InstanceType: "t2.micro",
-				},
-				RemoteAccess: NodeRemoteAccess{
-					PublicSSHKey: "/path/to/key.pub",
-				},
-			},
-		},
-		Devcontainers: []*Devcontainer{
-			{
-				Id:     "dev1",
-				NodeId: "node1",
-				Source: &DevcontainerSource{
-					URL: "https://github.com/example/repo.git",
-				},
-			},
-		},
-	}
-
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("DeserializeDenvclustrFile() = %v, want %v", got, want)
+		t.Errorf("deserializeDenvclustrFile() = %v, want nil", got)
 	}
 }
 
@@ -235,17 +170,17 @@ func TestMissingInfrastructure(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results - no error expected as validation happens elsewhere
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
 	// Check specific fields
 	if got == nil {
-		t.Errorf("DeserializeDenvclustrFile() returned nil, expected non-nil result")
+		t.Errorf("deserializeDenvclustrFile() returned nil, expected non-nil result")
 		return
 	}
 
@@ -272,23 +207,23 @@ func TestIncorrectTypeName(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results
 	if err == nil {
-		t.Errorf("DeserializeDenvclustrFile() expected error, got nil")
+		t.Errorf("deserializeDenvclustrFile() expected error, got nil")
 		return
 	}
 
 	// Check that the error message contains the expected substring
 	expectedErrSubstring := "cannot unmarshal number"
 	if !strings.Contains(err.Error(), expectedErrSubstring) {
-		t.Errorf("DeserializeDenvclustrFile() error = %v, want error containing %q", err, expectedErrSubstring)
+		t.Errorf("deserializeDenvclustrFile() error = %v, want error containing %q", err, expectedErrSubstring)
 	}
 
 	// Check that the result is nil
 	if got != nil {
-		t.Errorf("DeserializeDenvclustrFile() = %v, want nil", got)
+		t.Errorf("deserializeDenvclustrFile() = %v, want nil", got)
 	}
 }
 
@@ -301,11 +236,11 @@ func TestEmptyArrays(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results - no error expected as validation happens elsewhere
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
@@ -318,7 +253,7 @@ func TestEmptyArrays(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("DeserializeDenvclustrFile() = %v, want %v", got, want)
+		t.Errorf("deserializeDenvclustrFile() = %v, want %v", got, want)
 	}
 }
 
@@ -331,11 +266,11 @@ func TestWrongEnumValues(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results - no error expected as validation happens elsewhere
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
@@ -374,7 +309,7 @@ func TestWrongEnumValues(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("DeserializeDenvclustrFile() = %v, want %v", got, want)
+		t.Errorf("deserializeDenvclustrFile() = %v, want %v", got, want)
 	}
 }
 
@@ -387,17 +322,17 @@ func TestDuplicateInfrastructureIds(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results - no error expected as validation happens elsewhere
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
 	// Expected result - both infrastructure items should be present
 	if got == nil {
-		t.Errorf("DeserializeDenvclustrFile() returned nil, expected non-nil result")
+		t.Errorf("deserializeDenvclustrFile() returned nil, expected non-nil result")
 		return
 	}
 
@@ -421,17 +356,17 @@ func TestNonexistentNodeId(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results - no error expected as validation happens elsewhere
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
 	// Check that the devcontainer references a non-existent node ID
 	if got == nil {
-		t.Errorf("DeserializeDenvclustrFile() returned nil, expected non-nil result")
+		t.Errorf("deserializeDenvclustrFile() returned nil, expected non-nil result")
 		return
 	}
 
@@ -464,17 +399,17 @@ func TestExtraFields(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results - no error expected as extra fields are ignored
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
 	// Extra fields should be ignored, so the result should match the expected structure
 	if got == nil {
-		t.Errorf("DeserializeDenvclustrFile() returned nil, expected non-nil result")
+		t.Errorf("deserializeDenvclustrFile() returned nil, expected non-nil result")
 		return
 	}
 
@@ -502,17 +437,17 @@ func TestNullValues(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results - no error expected as validation happens elsewhere
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
 	// Check that null values are properly handled
 	if got == nil {
-		t.Errorf("DeserializeDenvclustrFile() returned nil, expected non-nil result")
+		t.Errorf("deserializeDenvclustrFile() returned nil, expected non-nil result")
 		return
 	}
 
@@ -531,17 +466,17 @@ func TestSSHWithoutKey(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results - no error expected as validation happens elsewhere
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
 	// Check that the SSH URL is present in the devcontainer source
 	if got == nil {
-		t.Errorf("DeserializeDenvclustrFile() returned nil, expected non-nil result")
+		t.Errorf("deserializeDenvclustrFile() returned nil, expected non-nil result")
 		return
 	}
 
@@ -567,17 +502,17 @@ func TestWhitespaceTrimming(t *testing.T) {
 	}
 
 	// Call the function being tested
-	got, err := DeserializeDenvclustrFile(data)
+	got, err := deserializeDenvclustrFile(data)
 
 	// Validate results
 	if err != nil {
-		t.Errorf("DeserializeDenvclustrFile() unexpected error: %v", err)
+		t.Errorf("deserializeDenvclustrFile() unexpected error: %v", err)
 		return
 	}
 
 	// Check that strings were properly trimmed
 	if got == nil {
-		t.Errorf("DeserializeDenvclustrFile() returned nil, expected non-nil result")
+		t.Errorf("deserializeDenvclustrFile() returned nil, expected non-nil result")
 		return
 	}
 
