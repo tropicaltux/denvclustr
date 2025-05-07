@@ -1,0 +1,28 @@
+{
+  "name": null,
+  "infrastructure": [
+    {
+      "id": "aws_infra",
+      "kind": null,
+      "provider": "aws",
+      "region": "us-west-2"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node1",
+      "infrastructure_id": "aws_infra",
+      "properties": null,
+      "remote_access": {
+        "public_ssh_key": "/path/to/key.pub"
+      }
+    }
+  ],
+  "devcontainers": [
+    {
+      "id": "dev1",
+      "node_id": "node1",
+      "source": null
+    }
+  ]
+}

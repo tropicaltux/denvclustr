@@ -1,0 +1,32 @@
+{
+  "name": "nonexistent-id",
+  "infrastructure": [
+    {
+      "id": "aws_infra",
+      "kind": "vm",
+      "provider": "aws",
+      "region": "us-west-2"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node1",
+      "infrastructure_id": "aws_infra",
+      "properties": {
+        "instance_type": "t2.micro"
+      },
+      "remote_access": {
+        "public_ssh_key": "/path/to/key.pub"
+      }
+    }
+  ],
+  "devcontainers": [
+    {
+      "id": "dev1",
+      "node_id": "nonexistent_node",
+      "source": {
+        "url": "https://github.com/example/repo.git"
+      }
+    }
+  ]
+}
