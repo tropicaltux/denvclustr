@@ -2,7 +2,7 @@
   "name": "invalid-json",
   "infrastructure": [
     {
-      "id": "infra1",
+      "id": "infrastructure1",
       "kind": "local",
       "provider": "docker"
       "region": "local"

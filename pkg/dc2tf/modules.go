@@ -40,55 +40,78 @@ func (c *converter) addModules(body *hclwrite.Body) error {
 }
 
 func (c *converter) writeDevcontainers(body *hclwrite.Body, devcontainers []*schema.Devcontainer, node *schema.Node) error {
-	parent := body.AppendNewBlock("devcontainers", nil).Body()
-	for _, devcontainer := range devcontainers {
-		devcontainerBody := parent.AppendNewBlock("", nil).Body()
-		devcontainerBody.SetAttributeValue("id", cty.StringVal(string(devcontainer.Id)))
+	var devcontainerItems []cty.Value
 
-		srcBody := devcontainerBody.AppendNewBlock("source", nil).Body()
-		srcBody.SetAttributeValue("url", cty.StringVal(string(devcontainer.Source.URL)))
+	for _, devcontainer := range devcontainers {
+		devcontainerMap := map[string]cty.Value{}
+		devcontainerMap["id"] = cty.StringVal(string(devcontainer.Id))
+
+		sourceMap := map[string]cty.Value{}
+		sourceMap["url"] = cty.StringVal(string(devcontainer.Source.URL))
 		if devcontainer.Source.Branch != "" {
-			srcBody.SetAttributeValue("branch", cty.StringVal(string(devcontainer.Source.Branch)))
+			sourceMap["branch"] = cty.StringVal(string(devcontainer.Source.Branch))
 		}
 		if devcontainer.Source.DevcontainerPath != "" {
-			srcBody.SetAttributeValue("devcontainer_path", cty.StringVal(string(devcontainer.Source.DevcontainerPath)))
+			sourceMap["devcontainer_path"] = cty.StringVal(string(devcontainer.Source.DevcontainerPath))
 		}
 		if devcontainer.Source.SshKey != nil {
-			sshKeyBody := srcBody.AppendNewBlock("ssh_key", nil).Body()
-			sshKeyBody.SetAttributeValue("ref", cty.StringVal(string(devcontainer.Source.SshKey.Reference)))
-			sshKeyBody.SetAttributeValue("src", cty.StringVal(string(devcontainer.Source.SshKey.Source)))
+			sshKeyMap := map[string]cty.Value{}
+			sshKeyMap["ref"] = cty.StringVal(string(devcontainer.Source.SshKey.Reference))
+			sshKeyMap["src"] = cty.StringVal(string(devcontainer.Source.SshKey.Source))
+			sourceMap["ssh_key"] = cty.ObjectVal(sshKeyMap)
 		}
 
-		remoteAccessBody := devcontainerBody.AppendNewBlock("remote_access", nil).Body()
-		if devcontainer.RemoteAccess.OpenVsCodeServer != nil {
-			vscodeServerBody := remoteAccessBody.AppendNewBlock("openvscode_server", nil).Body()
-			if devcontainer.RemoteAccess.OpenVsCodeServer.Port != nil {
-				vscodeServerBody.SetAttributeValue("port", cty.NumberIntVal(int64(*devcontainer.RemoteAccess.OpenVsCodeServer.Port)))
+		// Create remote_access block - adding source before remote_access to match order in etalon
+		devcontainerMap["source"] = cty.ObjectVal(sourceMap)
+
+		if devcontainer.RemoteAccess != nil {
+			remoteAccessMap := map[string]cty.Value{}
+			if devcontainer.RemoteAccess.OpenVsCodeServer != nil {
+				vscodeServerMap := map[string]cty.Value{}
+				if devcontainer.RemoteAccess.OpenVsCodeServer.Port != nil {
+					vscodeServerMap["port"] = cty.NumberIntVal(int64(*devcontainer.RemoteAccess.OpenVsCodeServer.Port))
+				}
+				remoteAccessMap["openvscode_server"] = cty.ObjectVal(vscodeServerMap)
 			}
+			if devcontainer.RemoteAccess.Ssh != nil {
+				sshMap := map[string]cty.Value{}
+				if devcontainer.RemoteAccess.Ssh.Port != nil {
+					sshMap["port"] = cty.NumberIntVal(int64(*devcontainer.RemoteAccess.Ssh.Port))
+				}
+				if devcontainer.RemoteAccess.Ssh.PublicSshKey != node.RemoteAccess.PublicSSHKey {
+					sshMap["public_ssh_key"] = cty.ObjectVal(map[string]cty.Value{
+						"local_key_path": cty.StringVal(string(devcontainer.RemoteAccess.Ssh.PublicSshKey)),
+					})
+				}
+				remoteAccessMap["ssh"] = cty.ObjectVal(sshMap)
+			}
+			devcontainerMap["remote_access"] = cty.ObjectVal(remoteAccessMap)
 		}
-		if devcontainer.RemoteAccess.Ssh != nil {
-			sshBody := remoteAccessBody.AppendNewBlock("ssh", nil).Body()
-			if devcontainer.RemoteAccess.Ssh.Port != nil {
-				sshBody.SetAttributeValue("port", cty.NumberIntVal(int64(*devcontainer.RemoteAccess.Ssh.Port)))
-			}
-			if devcontainer.RemoteAccess.Ssh.PublicSshKey != node.RemoteAccess.PublicSSHKey {
-				pk := sshBody.AppendNewBlock("public_ssh_key", nil).Body()
-				pk.SetAttributeValue("local_key_path", cty.StringVal(string(devcontainer.RemoteAccess.Ssh.PublicSshKey)))
-			}
-		}
+
+		devcontainerItems = append(devcontainerItems, cty.ObjectVal(devcontainerMap))
 	}
+
+	// Handle empty devcontainers case
+	if len(devcontainerItems) == 0 {
+		body.SetAttributeValue("devcontainers", cty.ListValEmpty(cty.DynamicPseudoType))
+	} else {
+		body.SetAttributeValue("devcontainers", cty.ListVal(devcontainerItems))
+	}
+
 	return nil
 }
 
 func (c *converter) writeNodeSSH(body *hclwrite.Body, node *schema.Node) error {
-	publicSshKeyBody := body.AppendNewBlock("public_ssh_key", nil).Body()
-	publicSshKeyBody.SetAttributeValue("local_key_path", cty.StringVal(string(node.RemoteAccess.PublicSSHKey)))
+	body.SetAttributeValue("public_ssh_key", cty.ObjectVal(map[string]cty.Value{
+		"local_key_path": cty.StringVal(string(node.RemoteAccess.PublicSSHKey)),
+	}))
 	return nil
 }
 
 func (c *converter) writeDNS(body *hclwrite.Body, node *schema.Node) {
 	if node.DNS != nil && node.DNS.HighLevelDomain != "" {
-		dnsBody := body.AppendNewBlock("dns", nil).Body()
-		dnsBody.SetAttributeValue("high_level_domain", cty.StringVal(string(node.DNS.HighLevelDomain)))
+		body.SetAttributeValue("dns", cty.ObjectVal(map[string]cty.Value{
+			"high_level_domain": cty.StringVal(string(node.DNS.HighLevelDomain)),
+		}))
 	}
 }

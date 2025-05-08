@@ -42,7 +42,7 @@ func TestParse(t *testing.T) {
 		},
 		{
 			name:          "Duplicate infrastructure ID",
-			filename:      "duplicate_infra_id.json",
+			filename:      "duplicate_infrastructure_id.json",
 			expectError:   true,
 			errorContains: "infrastructure id \"infrastructure1\" is duplicated",
 		},
