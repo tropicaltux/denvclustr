@@ -1,0 +1,11 @@
+{
+  "name": "invalid-json",
+  "infrastructure": [
+    {
+      "id": "infra1",
+      "kind": "local",
+      "provider": "docker"
+      "region": "local"
+    }
+  ]
+} 

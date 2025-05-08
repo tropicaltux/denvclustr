@@ -1,27 +1,56 @@
 package schema
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
-func validateSchema(object map[string]any) error {
-	schema := GetSchema()
+var (
+	validatorOnce sync.Once
+	validator     *jsonschema.Schema
+	validatorErr  error
+)
 
-	compiler := jsonschema.NewCompiler()
+func getValidator() (*jsonschema.Schema, error) {
+	validatorOnce.Do(func() {
+		schemaBytes, err := json.Marshal(GetSchema())
+		if err != nil {
+			validatorErr = fmt.Errorf("marshal schema: %w", err)
+			return
+		}
 
-	if err := compiler.AddResource("schema.json", schema); err != nil {
-		return fmt.Errorf("failed to add schema resource: %w", err)
-	}
+		var compilerFormatSchema any
+		if err := json.Unmarshal(schemaBytes, &compilerFormatSchema); err != nil {
+			validatorErr = fmt.Errorf("unmarshal schema: %w", err)
+			return
+		}
 
-	validator, err := compiler.Compile("schema.json")
+		c := jsonschema.NewCompiler()
+
+		if err := c.AddResource("schema.go", compilerFormatSchema); err != nil {
+			validatorErr = fmt.Errorf("add resource: %w", err)
+			return
+		}
+
+		validator, err = c.Compile("schema.go")
+		if err != nil {
+			validatorErr = fmt.Errorf("compile schema: %w", err)
+		}
+	})
+	return validator, validatorErr
+}
+
+func validateSchema(data any) error {
+	validator, err := getValidator()
 	if err != nil {
-		return fmt.Errorf("failed to compile schema: %w", err)
+		return fmt.Errorf("get validator: %w", err)
 	}
 
-	if err := validator.Validate(object); err != nil {
+	if err := validator.Validate(data); err != nil {
 		return fmt.Errorf("schema validation failed: %w", err)
 	}
 

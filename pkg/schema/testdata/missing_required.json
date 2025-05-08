@@ -1,0 +1,20 @@
+{
+	"name": "missing-required",
+	"infrastructure": [
+		{
+			"id": "infrastructure1",
+			"kind": "vm",
+			"provider": "aws",
+			"region": "us-west-2"
+		}
+	],
+	"devcontainers": [
+		{
+			"id": "devcontainer1",
+			"node_id": "node1",
+			"source": {
+				"url": "https://github.com/example/repo.git"
+			}
+		}
+	]
+} 

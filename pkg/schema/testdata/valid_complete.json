@@ -1,0 +1,62 @@
+{
+  "name": "complete-cluster",
+  "infrastructure": [
+    {
+      "id": "aws-infrastructure1",
+      "kind": "vm",
+      "provider": "aws",
+      "region": "us-west-2"
+    },
+    {
+      "id": "aws-infrastructure2",
+      "kind": "vm",
+      "provider": "aws",
+      "region": "us-east-1"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "aws-node1",
+      "infrastructure_id": "aws-infrastructure1",
+      "properties": {
+        "instance_type": "t3.micro"
+      },
+      "remote_access": {
+        "public_ssh_key": "~/.ssh/id_rsa.pub"
+      },
+      "dns": {
+        "high_level_domain": "example.com"
+      }
+    },
+    {
+      "id": "aws-node2",
+      "infrastructure_id": "aws-infrastructure2",
+      "properties": {
+        "instance_type": "t2.small"
+      },
+      "remote_access": {
+        "public_ssh_key": "/etc/ssh/ssh_host_rsa_key.pub"
+      }
+    }
+  ],
+  "devcontainers": [
+    {
+      "id": "devcontainer-webapp",
+      "node_id": "aws-node1",
+      "source": {
+        "url": "https://github.com/example/web-app.git"
+      }
+    },
+    {
+      "id": "devcontainer-api",
+      "node_id": "aws-node2",
+      "source": {
+        "url": "git@github.com:example/api-service.git",
+        "ssh_key": {
+          "source": "secrets_manager",
+          "reference": "github-ssh-key"
+        }
+      }
+    }
+  ]
+} 

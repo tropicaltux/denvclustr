@@ -1,0 +1,39 @@
+{
+	"name": "duplicate-dev-id",
+	"infrastructure": [
+		{
+			"id": "infrastructure1",
+			"kind": "vm",
+			"provider": "aws",
+			"region": "us-west-2"
+		}
+	],
+	"nodes": [
+		{
+			"id": "node1",
+			"infrastructure_id": "infrastructure1",
+			"properties": {
+				"instance_type": "t2.micro"
+			},
+			"remote_access": {
+				"public_ssh_key": "~/.ssh/id_rsa.pub"
+			}
+		}
+	],
+	"devcontainers": [
+		{
+			"id": "devcontainer1",
+			"node_id": "node1",
+			"source": {
+				"url": "https://github.com/example/repo1.git"
+			}
+		},
+		{
+			"id": "devcontainer1",
+			"node_id": "node1",
+			"source": {
+				"url": "https://github.com/example/repo2.git"
+			}
+		}
+	]
+} 

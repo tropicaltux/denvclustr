@@ -17,10 +17,6 @@ type converter struct {
 }
 
 func (c *converter) toTerraform() (*hclwrite.File, error) {
-	if err := schema.Validate(c.root); err != nil {
-		return nil, err
-	}
-
 	f := hclwrite.NewEmptyFile()
 	root := f.Body()
 

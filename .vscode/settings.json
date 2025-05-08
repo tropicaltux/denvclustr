@@ -9,5 +9,8 @@
         "devcontainers",
         "tropicaltux",
         "invopop"
-    ]
+    ],
+    "files.associations": {
+        "pkg/schema/testdata/invalid_json_syntax.json": "plaintext"
+    }
 }
