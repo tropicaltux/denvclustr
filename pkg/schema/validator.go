@@ -3,10 +3,33 @@ package schema
 import (
 	"fmt"
 	"strings"
+
+	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
+func validateSchema(object map[string]any) error {
+	schema := GetSchema()
+
+	compiler := jsonschema.NewCompiler()
+
+	if err := compiler.AddResource("schema.json", schema); err != nil {
+		return fmt.Errorf("failed to add schema resource: %w", err)
+	}
+
+	validator, err := compiler.Compile("schema.json")
+	if err != nil {
+		return fmt.Errorf("failed to compile schema: %w", err)
+	}
+
+	if err := validator.Validate(object); err != nil {
+		return fmt.Errorf("schema validation failed: %w", err)
+	}
+
+	return nil
+}
+
 // Validate a fully‑deserialized spec.
-func Validate(root *DenvclustrRoot) error {
+func validateDeserialized(root *DenvclustrRoot) error {
 	if err := validateInfrastructure(root); err != nil {
 		return err
 	}
