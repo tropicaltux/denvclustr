@@ -7,7 +7,9 @@ module "node1" {
   source        = "github.com/tropicaltux/terraform-devcontainers"
   name          = "node1"
   instance_type = "t3.micro"
-  provider      = "aws.infrastructure1"
+  providers     = {
+    aws = "aws.infrastructure1"
+  }
 
   devcontainers = [
     {
@@ -28,7 +30,9 @@ module "node2" {
   source        = "github.com/tropicaltux/terraform-devcontainers"
   name          = "node2"
   instance_type = "t3.large"
-  provider      = "aws.infrastructure1"
+  providers     = {
+    aws = "aws.infrastructure1"
+  }
 
   devcontainers = [
     {

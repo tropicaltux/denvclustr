@@ -26,7 +26,12 @@ func (c *converter) addModules(body *hclwrite.Body) error {
 		moduleBody.SetAttributeValue("source", cty.StringVal("github.com/tropicaltux/terraform-devcontainers"))
 		moduleBody.SetAttributeValue("name", cty.StringVal(string(node.Id)))
 		moduleBody.SetAttributeValue("instance_type", cty.StringVal(string(node.Properties.InstanceType)))
-		moduleBody.SetAttributeValue("provider", cty.StringVal(fmt.Sprintf("aws.%s", infrastructureById[string(node.InfrastructureId)].Id)))
+
+		// Replace provider attribute with providers block
+		providersMap := map[string]cty.Value{
+			"aws": cty.StringVal(fmt.Sprintf("aws.%s", infrastructureById[string(node.InfrastructureId)].Id)),
+		}
+		moduleBody.SetAttributeValue("providers", cty.ObjectVal(providersMap))
 
 		if err := c.writeDevcontainers(moduleBody, devcontainers, node); err != nil {
 			return err
