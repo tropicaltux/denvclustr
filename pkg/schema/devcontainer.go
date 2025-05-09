@@ -35,8 +35,8 @@ type DevcontainerSource struct {
 }
 
 type Devcontainer struct {
-	Id           TrimmedString             `json:"id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$" jsonschema_description:"Unique identifier of this devcontainer within the cluster."`
-	NodeId       TrimmedString             `json:"node_id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$" jsonschema_description:"Identifier of the node that will host this devcontainer (must match an entry in the top‑level nodes list)."`
+	Id           TrimmedString             `json:"id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]$" jsonschema_description:"Unique identifier of this devcontainer within the cluster."`
+	NodeId       TrimmedString             `json:"node_id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]$" jsonschema_description:"Identifier of the node that will host this devcontainer (must match an entry in the top‑level nodes list)."`
 	Source       *DevcontainerSource       `json:"source" jsonschema:"required" jsonschema_description:"Reference to the source location containing the devcontainer definition and related files."`
 	RemoteAccess *DevcontainerRemoteAccess `json:"remote_access,omitempty" jsonschema_description:"Configuration for accessing the devcontainer remotely via SSH or a web-based IDE. OpenVSCode Server is enabled by default."`
 }

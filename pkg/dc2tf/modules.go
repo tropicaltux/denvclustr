@@ -123,7 +123,7 @@ func (c *converter) writeDevcontainers(body *hclwrite.Body, devcontainers []*sch
 				if devcontainer.RemoteAccess.Ssh.Port != nil {
 					sshMap["port"] = cty.NumberIntVal(int64(*devcontainer.RemoteAccess.Ssh.Port))
 				}
-				if devcontainer.RemoteAccess.Ssh.PublicSshKey != node.RemoteAccess.PublicSSHKey {
+				if devcontainer.RemoteAccess.Ssh.PublicSshKey != "" && devcontainer.RemoteAccess.Ssh.PublicSshKey != node.RemoteAccess.PublicSSHKey {
 					sshMap["public_ssh_key"] = cty.ObjectVal(map[string]cty.Value{
 						"local_key_path": cty.StringVal(string(devcontainer.RemoteAccess.Ssh.PublicSshKey)),
 					})

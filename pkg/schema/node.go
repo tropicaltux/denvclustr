@@ -13,8 +13,8 @@ type NodeDNS struct {
 }
 
 type Node struct {
-	Id               TrimmedString    `json:"id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$" jsonschema_description:"Unique identifier for this node. Must start with a letter or underscore, can contain alphanumeric characters, underscores, and hyphens. Cannot end with a hyphen."`
-	InfrastructureId TrimmedString    `json:"infrastructure_id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z0-9_]$" jsonschema_description:"Reference to an entry in the 'infrastructure' array."`
+	Id               TrimmedString    `json:"id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]$" jsonschema_description:"Unique identifier for this node. Must start with a letter or underscore, can contain alphanumeric characters, underscores, and hyphens. Cannot end with a hyphen."`
+	InfrastructureId TrimmedString    `json:"infrastructure_id" jsonschema:"required,minLength=1,pattern=^[_a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]$" jsonschema_description:"Reference to an entry in the 'infrastructure' array."`
 	Properties       NodeProperties   `json:"properties" jsonschema:"required" jsonschema_description:"General technical configuration of the node."`
 	RemoteAccess     NodeRemoteAccess `json:"remote_access" jsonschema:"required" jsonschema_description:"Access configuration for the node."`
 	DNS              *NodeDNS         `json:"dns,omitempty" jsonschema_description:"DNS configuration for this node."`
