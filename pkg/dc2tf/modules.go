@@ -1,8 +1,7 @@
 package dc2tf
 
 import (
-	"fmt"
-
+	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/tropicaltux/denvclustr/pkg/schema"
 	"github.com/zclconf/go-cty/cty"
@@ -27,11 +26,52 @@ func (c *converter) addModules(body *hclwrite.Body) error {
 		moduleBody.SetAttributeValue("name", cty.StringVal(string(node.Id)))
 		moduleBody.SetAttributeValue("instance_type", cty.StringVal(string(node.Properties.InstanceType)))
 
-		// Replace provider attribute with providers block
-		providersMap := map[string]cty.Value{
-			"aws": cty.StringVal(fmt.Sprintf("aws.%s", infrastructureById[string(node.InfrastructureId)].Id)),
-		}
-		moduleBody.SetAttributeValue("providers", cty.ObjectVal(providersMap))
+		// Replace provider attribute with providers attribute using raw tokens
+		providerTokens := hclwrite.Tokens{}
+
+		// Opening brace
+		providerTokens = append(providerTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenOBrace,
+			Bytes: []byte("{"),
+		})
+
+		// Key "aws"
+		providerTokens = append(providerTokens, &hclwrite.Token{
+			Type:         hclsyntax.TokenIdent,
+			Bytes:        []byte("aws"),
+			SpacesBefore: 1,
+		})
+
+		// Equal sign
+		providerTokens = append(providerTokens, &hclwrite.Token{
+			Type:         hclsyntax.TokenEqual,
+			Bytes:        []byte("="),
+			SpacesBefore: 1,
+		})
+
+		// Reference to aws provider without quotes
+		providerTokens = append(providerTokens, &hclwrite.Token{
+			Type:         hclsyntax.TokenIdent,
+			Bytes:        []byte("aws"),
+			SpacesBefore: 1,
+		})
+		providerTokens = append(providerTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenDot,
+			Bytes: []byte("."),
+		})
+		providerTokens = append(providerTokens, &hclwrite.Token{
+			Type:  hclsyntax.TokenIdent,
+			Bytes: []byte(string(infrastructureById[string(node.InfrastructureId)].Id)),
+		})
+
+		// Closing brace
+		providerTokens = append(providerTokens, &hclwrite.Token{
+			Type:         hclsyntax.TokenCBrace,
+			Bytes:        []byte("}"),
+			SpacesBefore: 1,
+		})
+
+		moduleBody.SetAttributeRaw("providers", providerTokens)
 
 		if err := c.writeDevcontainers(moduleBody, devcontainers, node); err != nil {
 			return err

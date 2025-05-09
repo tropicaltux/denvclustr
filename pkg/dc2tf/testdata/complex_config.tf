@@ -8,7 +8,7 @@ module "node1" {
   name          = "node1"
   instance_type = "t3.micro"
   providers     = {
-    aws = "aws.infrastructure1"
+    aws = aws.infrastructure1
   }
 
   devcontainers = [
@@ -48,7 +48,7 @@ module "node1" {
 
 output "node1_output" {
   value     = {
-    module = "module.node1"
+    module = module.node1
   }
   sensitive = true
 } 
