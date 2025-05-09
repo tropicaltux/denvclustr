@@ -1,0 +1,32 @@
+{
+  "name": "simple-aws-devcontainer",
+  "infrastructure": [
+    {
+      "id": "aws_eu_central_1",
+      "kind": "vm",
+      "provider": "aws",
+      "region": "eu-central-1"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "primary_node",
+      "infrastructure_id": "aws_eu_central_1",
+      "properties": {
+        "instance_type": "t2.micro"
+      },
+      "remote_access": {
+        "public_ssh_key": "~/.ssh/id_ed25519.pub"
+      }
+    }
+  ],
+  "devcontainers": [
+    {
+      "id": "python_devcontainer",
+      "node_id": "primary_node",
+      "source": {
+        "url": "https://github.com/microsoft/vscode-remote-try-python.git"
+      }
+    }
+  ]
+}
