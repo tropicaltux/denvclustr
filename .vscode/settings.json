@@ -8,7 +8,10 @@
         "jsonschema",
         "devcontainers",
         "tropicaltux",
-        "invopop"
+        "invopop",
+        "hclwrite",
+        "hclsyntax",
+        "zclconf"
     ],
     "files.associations": {
         "pkg/schema/testdata/invalid_json_syntax.json": "plaintext"

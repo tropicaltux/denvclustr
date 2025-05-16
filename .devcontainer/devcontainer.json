@@ -1,5 +1,5 @@
 {
-    "name": "Project X",
+    "name": "Denvclustr",
     "image": "mcr.microsoft.com/devcontainers/go:1.24-bookworm",
     "workspaceFolder": "/denvclustr",
     "workspaceMount": "source=${localWorkspaceFolder},target=/denvclustr,type=bind,consistency=cached",
