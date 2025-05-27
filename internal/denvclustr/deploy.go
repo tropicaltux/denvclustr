@@ -7,11 +7,13 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-exec/tfexec"
 
 	_ "github.com/tropicaltux/denvclustr/internal/logger"
+	"github.com/tropicaltux/denvclustr/pkg/schema"
 )
 
 func showPlan(inputFile, workDirPath string) error {
@@ -23,6 +25,7 @@ func showPlan(inputFile, workDirPath string) error {
 	slog.Info("Showing deployment plan", "input", inputFile)
 
 	// Process the input file
+	// We don't need the root configuration for showPlan, but we need the HCL file
 	_, hclFile, err := processInputFile(inputFile)
 	if err != nil {
 		return err
@@ -107,7 +110,7 @@ func deployDevcontainers(inputFile, workDirPath string) error {
 	slog.Info("Deploying devcontainers", "input", inputFile)
 
 	// Process the input file
-	_, hclFile, err := processInputFile(inputFile)
+	root, hclFile, err := processInputFile(inputFile)
 	if err != nil {
 		return err
 	}
@@ -205,7 +208,7 @@ func deployDevcontainers(inputFile, workDirPath string) error {
 		return fmt.Errorf("failed to get outputs: %w", err)
 	}
 
-	if err := displayDeploymentOutputs(outputs); err != nil {
+	if err := displayDeploymentOutputs(outputs, root); err != nil {
 		return fmt.Errorf("failed to display outputs: %w", err)
 	}
 
@@ -216,7 +219,7 @@ func deployDevcontainers(inputFile, workDirPath string) error {
 }
 
 // displayDeploymentOutputs formats and displays the deployment outputs in a user-friendly way
-func displayDeploymentOutputs(outputs map[string]tfexec.OutputMeta) error {
+func displayDeploymentOutputs(outputs map[string]tfexec.OutputMeta, root *schema.DenvclustrRoot) error {
 	if len(outputs) == 0 {
 		fmt.Println("\nNo outputs available.")
 		return nil
@@ -224,6 +227,22 @@ func displayDeploymentOutputs(outputs map[string]tfexec.OutputMeta) error {
 
 	fmt.Println("\n🚀 Available Access Methods:")
 	fmt.Println("==========================")
+
+	// Find the region from the infrastructure configuration
+	var awsRegion string
+	if root != nil && len(root.Infrastructure) > 0 {
+		for _, infra := range root.Infrastructure {
+			if infra.Provider == schema.ProviderAws {
+				awsRegion = string(infra.Region)
+				slog.Info("Using region from infrastructure configuration", "region", awsRegion)
+				break
+			}
+		}
+	}
+
+	if awsRegion == "" {
+		slog.Warn("AWS region not found in configuration. Cannot retrieve tokens from SSM.")
+	}
 
 	for _, output := range outputs {
 		var outputData map[string]any
@@ -236,12 +255,37 @@ func displayDeploymentOutputs(outputs map[string]tfexec.OutputMeta) error {
 
 		for _, devcontainer := range devcontainers {
 			devcontainerMap := devcontainer.(map[string]any)
-			fmt.Printf("\n📦 Devcontainer %s:\n", devcontainerMap["id"])
+			id := devcontainerMap["id"].(string)
+			fmt.Printf("\n📦 Devcontainer %s:\n", id)
 			remote_access := devcontainerMap["remote_access"].(map[string]any)
 
 			if remote_access["openvscode_server"] != nil {
 				openvscode_server := remote_access["openvscode_server"].(map[string]any)
-				fmt.Printf("  🌐 VS Code Server: %s\n", openvscode_server["url"])
+				tokenSSMParameter := openvscode_server["token_ssm_parameter"].(string)
+				urlTemplate := openvscode_server["url"].(string)
+
+				if awsRegion == "" {
+					// No region available, don't try to get token
+					fmt.Printf("  🌐 VS Code Server URL template: %s\n", urlTemplate)
+					fmt.Printf("  🔑 Get token from AWS SSM parameter: %s\n", tokenSSMParameter)
+					fmt.Printf("  ℹ️  Region not specified in configuration. Cannot retrieve token automatically.\n")
+					fmt.Printf("  ℹ️  AWS CLI command (specify your region): aws ssm get-parameter --region YOUR_REGION --name %s --with-decryption --query \"Parameter.Value\" --output text\n", tokenSSMParameter)
+				} else {
+					// Region is available, try to get token
+					token, err := getTokenFromSSM(tokenSSMParameter, awsRegion)
+					if err != nil {
+						slog.Error("Failed to get OpenVSCode token", "error", err, "parameter", tokenSSMParameter)
+						fmt.Printf("  🌐 VS Code Server URL template: %s\n", urlTemplate)
+						fmt.Printf("  🔑 Get token from AWS SSM parameter: %s\n", tokenSSMParameter)
+						fmt.Printf("  ℹ️  Could not retrieve token: %s\n", err)
+						fmt.Printf("  ℹ️  AWS CLI command: aws ssm get-parameter --region %s --name %s --with-decryption --query \"Parameter.Value\" --output text\n",
+							awsRegion, tokenSSMParameter)
+					} else {
+						// Replace {token} placeholder with the actual token
+						url := strings.Replace(urlTemplate, "{token}", token, 1)
+						fmt.Printf("  🌐 VS Code Server: %s\n", url)
+					}
+				}
 			}
 
 			if remote_access["ssh"] != nil {

@@ -58,12 +58,12 @@ output "node1_output" {
   value     = {
     module = module.node1
   }
-  sensitive = true
+  
 }
 
 output "node2_output" {
   value     = {
     module = module.node2
   }
-  sensitive = true
+  
 } 

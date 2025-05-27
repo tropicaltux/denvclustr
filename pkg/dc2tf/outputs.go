@@ -5,7 +5,6 @@ import (
 
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
-	"github.com/zclconf/go-cty/cty"
 )
 
 func (c *converter) addOutputs(body *hclwrite.Body) error {
@@ -59,7 +58,6 @@ func (c *converter) addOutputs(body *hclwrite.Body) error {
 		})
 
 		outputBody.SetAttributeRaw("value", objTokens)
-		outputBody.SetAttributeValue("sensitive", cty.BoolVal(true))
 	}
 	return nil
 }

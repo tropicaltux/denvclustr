@@ -22,5 +22,5 @@ output "node1_output" {
   value     = {
     module = module.node1
   }
-  sensitive = true
+  
 } 
